@@ -8,8 +8,7 @@ class MainGameClass
 {
 private:
 	Map _room;
-	Projectile **_flying_stuff;
-	Monster** _Enemys;
+	std::vector<Monster*> _Enemys;
 	Knight *_Player;
 	int _len_of_enemy, _len_of_flying_stuff;
 	std::string _message;
@@ -19,6 +18,10 @@ public:
 	void Generate();
 	void Draw() const;
 	void EnteractPlayer();
+	void MoveEnemy();
 	bool GetGame() const;
+	int GetHp() const;
+	void DrawWin() const;
+	void DrawLose() const;
 };
 

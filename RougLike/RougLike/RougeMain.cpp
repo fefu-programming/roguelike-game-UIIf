@@ -8,5 +8,14 @@ int main() {
 	while (game.GetGame()) {
 		game.Draw();
 		game.EnteractPlayer();
+		game.MoveEnemy();
 	}
+
+	if (game.GetHp() > 0) {
+		game.DrawWin();
+	}
+	else {
+		game.DrawLose();
+	}
+
 }

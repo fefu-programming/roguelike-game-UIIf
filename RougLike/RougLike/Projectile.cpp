@@ -24,3 +24,7 @@ void Projectile::Move(Map m) {
 		m.SetSmth(_x,_y,new Space(_x, _y));
 	}
 };
+
+bool Projectile::TakeDmg(int dmg) {
+	return 1;
+}

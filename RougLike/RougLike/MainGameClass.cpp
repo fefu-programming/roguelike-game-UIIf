@@ -8,7 +8,6 @@ MainGameClass::MainGameClass(int W, int H , int sW , int sH) {
 
 void MainGameClass::Generate() {
 	_len_of_enemy = rand() % 10 + 5;
-	_Enemys = new Monster*[_len_of_enemy];
 	int mapH = _room.GetHeight(), mapW = _room.GetWidth();
 	for (int i = 0; i < rand() % 10 + 10; i++) {
 		int x = rand() % (mapW-5), y = rand() % (mapH-5);
@@ -33,9 +32,14 @@ void MainGameClass::Generate() {
 			x = rand() % mapW/2 + mapW / 2;
 			y = rand() % (mapH - 1) + 1;
 		}
-		_Enemys[i] = (EnemyFactory(x,y));
+		_Enemys.push_back(EnemyFactory(x,y));
 		_room.SetSmth(x,y,_Enemys[i]);
 	}
+	while (_room.GetSmth(x, y)->GetSym() != ' ') {
+		x = rand() % mapW / 2 + mapW / 2;
+		y = rand() % (mapH - 1) + 1;
+	}
+	_room.SetSmth(x,y,new Princess(x,y));
 }
 
 void MainGameClass::Draw() const {
@@ -67,9 +71,39 @@ void MainGameClass::EnteractPlayer() {
 	default:
 		dir = 0;
 	}
-	_Player->Enteract(_room,dir);
+	_GameIsOn = _Player->Enteract(_room,dir);
+	for (int i = 0; i < _Enemys.size(); i++) {
+		if (!_Enemys[i]->GetHp() < 0) {
+			_Enemys.erase(_Enemys.begin() + i);
+			i--;
+		}
+	}
+}
+
+void MainGameClass::MoveEnemy() {
+	for (int i = 0; i < _Enemys.size(); i++) {
+		_Enemys[i]->Move(_room);
+	}
 }
 
 bool MainGameClass::GetGame() const {
 	return _GameIsOn;
+}
+
+int MainGameClass::GetHp() const{
+	return _Player->GetHp();
+}
+
+void MainGameClass::DrawWin() const{
+	this->Draw();
+	std::cout << std::endl;
+	for(int i = 0; i < 10; i++)
+		std::cout << "You save the princess\n";
+}
+
+void MainGameClass::DrawLose() const {
+	this->Draw();
+	std::cout << std::endl;
+	for (int i = 0; i < 10; i++)
+		std::cout << "Oh NOOO, MY PRINCESS COLECTION!!!\n";
 }

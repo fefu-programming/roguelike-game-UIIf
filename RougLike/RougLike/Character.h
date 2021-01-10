@@ -1,10 +1,12 @@
 #pragma once
 #include <vector>
 #include "Map.h"
+#include "Projectile.h"
 
 class Character :public GameObj
 {
 protected:
+	std::vector<Projectile> bullets;
 	int _hp,
 		_damage,
 		_max_hp;
@@ -13,7 +15,6 @@ public:
 	int GetHp() const;
 	int GetDamage() const;
 	bool TakeDmg(int dmg);
-	char Move(Map m);
 };
 
 class Princess : public GameObj {
@@ -23,15 +24,17 @@ public:
 
 class Monster : public Character {
 protected:
-	int fild_of_view;
+	int _fild_of_view;
 	char choose_direction(Map m) const;
+public:
 	bool TakeDmg(int dmg);
+	void Move(Map m);
 };
 
 class Knight : public Character {
 public:
 	Knight(int x, int y);
-	void Enteract(Map m, char dir);
+	bool Enteract(Map m, char dir);
 	void Shoot() const;
 };
 

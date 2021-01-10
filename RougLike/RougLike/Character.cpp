@@ -25,10 +25,6 @@ bool Character::TakeDmg(int dmg) {
 	return 0;
 }
 
-char Character::Move(Map m) {
-	return -1;
-};
-
 Wall::Wall(int x, int y) {
 	_sym = '#';
 	_x = x;
@@ -48,7 +44,7 @@ Space::Space(std::vector<int> cord) {
 }
 
 Princess::Princess(int x, int y) {
-	_sym = 'p';
+	_sym = 'P';
 	_x = x;
 	_y = y;
 }
@@ -66,7 +62,7 @@ void Knight::Shoot() const{
 
 }
 
-void Knight::Enteract(Map m, char dir) {
+bool Knight::Enteract(Map m, char dir) {
 	GameObj* Near;
 	switch (dir){
 	case 1:
@@ -84,7 +80,7 @@ void Knight::Enteract(Map m, char dir) {
 	case 5:
 		this->Shoot();
 	default:
-		return;
+		return 1;
 	}
 	char sym = Near->GetSym();
 	std::vector<int> cord = Near->GetPos();
@@ -94,17 +90,20 @@ void Knight::Enteract(Map m, char dir) {
 		_y = cord[1];
 		m.SetSmth(_x,_y,this);
 	}
+	else if (sym == 'P') {
+		return 0;
+	}
 	else if (sym != '#') {
-		GameObj* En = (m.GetSmth(cord));
-		std::cout << std::endl << En->TakeDmg(_damage);
-		if (En->TakeDmg(_damage)) {
+		std::cout << std::endl << Near->TakeDmg(_damage);
+		if (Near->TakeDmg(_damage)) {
 			m.SetSmth(cord, new Space(cord[0],cord[1]));
 		}
 	}
+	return 1;
 }
 
 char Monster::choose_direction(Map m) const {
-	return -1;
+	return rand()%4 + 1;
 }
 
 bool Monster::TakeDmg(int dmg) {
@@ -114,6 +113,43 @@ bool Monster::TakeDmg(int dmg) {
 	}
 	return 0;
 }
+
+void Monster::Move(Map m) {
+	char d = this->choose_direction(m);
+	GameObj* Near = this;
+	switch (d)
+	{
+	case 1:
+		Near = m.GetSmth(_x, _y - 1);
+		break;
+	case 2:
+		Near = m.GetSmth(_x + 1, _y);
+		break;
+	case 3:
+		Near = m.GetSmth(_x, _y + 1);
+		break;
+	case 4:
+		Near = m.GetSmth(_x - 1, _y);
+		break;
+	default:
+		break;
+	}
+	char sym = Near->GetSym();
+	std::vector<int> cord = Near->GetPos();
+	if (sym == ' ') {
+		m.SetSmth(_x, _y, new Space(_x, _y));
+		_x = cord[0];
+		_y = cord[1];
+		m.SetSmth(_x, _y, this);
+	}
+	else if (sym == 'K') {
+		std::cout << std::endl << Near->TakeDmg(_damage);
+		if (Near->TakeDmg(_damage)) {
+			m.SetSmth(cord, new Space(cord[0], cord[1]));
+		}
+	}
+}
+
 
 Zombie::Zombie(int x, int y) {
 	_sym = 'Z';

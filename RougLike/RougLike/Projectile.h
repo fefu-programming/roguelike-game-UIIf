@@ -10,5 +10,6 @@ protected:
 public:
 	Projectile(char d);
 	void Move(Map m);
+	bool TakeDmg(int dmg);
 };
 
