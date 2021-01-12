@@ -1,175 +1,133 @@
 #include "Character.h"
-#include "GameObj.h"
-#include <vector>
-#include <iostream>
+int Character::GetDmg() const {
+	return _sword_dmg;
+}
 
-std::vector<int> GameObj::GetPos() const {
-	return std::vector<int> {_x,_y};
-}
-char GameObj::GetSym() const {
-	return _sym;
-}
 
 int Character::GetHp() const {
 	return _hp;
 }
-int Character::GetDamage() const {
-	return _damage;
+
+int Character::GetArrows() const {
+	return _arrows;
 }
 
-bool Character::TakeDmg(int dmg) {
-	_hp -= dmg;
-	if (_hp < 1) {
-		return 1;
-	}
-	return 0;
-}
-
-Wall::Wall(int x, int y) {
-	_sym = '#';
+Projectile::Projectile(int x, int y, int dmg, char dir, bool fromHero) {
 	_x = x;
 	_y = y;
+	_dmg = dmg;
+	_sym = dir;
+	_fromHero = fromHero;
+}
+Projectile::Projectile(GameObj parent, int dmg, char dir) {
+	_x = parent.GetPos()[0];
+	_y = parent.GetPos()[1];
+	_dmg = dmg;
+	_sym = dir;
+	_fromHero = false;
+	if(parent.GetSym() == 'K')
+		_fromHero = true;
 }
 
-Space::Space(int x, int y) {
-	_sym = ' ';
+char Monster::GetDir(Character k) const {
+	return -1;
+}
+
+Knight::Knight(int x, int y) {
 	_x = x;
 	_y = y;
-}
-
-Space::Space(std::vector<int> cord) {
-	_sym = ' ';
-	_x = cord[0];
-	_y = cord[1];
-}
-
-Princess::Princess(int x, int y) {
-	_sym = 'P';
-	_x = x;
-	_y = y;
-}
-
-Knight::Knight(int x,int y) {
 	_sym = 'K';
-	_x = x;
-	_y = y;
-	_hp = 10;
-	_damage = 2;
-	_max_hp = 15;
-}
-
-void Knight::Shoot() const{
-
-}
-
-bool Knight::Enteract(Map m, char dir) {
-	GameObj* Near;
-	switch (dir){
-	case 1:
-		Near = m.GetSmth(_x,_y-1);
-		break;
-	case 2:
-		Near = m.GetSmth(_x + 1, _y);
-		break;
-	case 3:
-		Near = m.GetSmth(_x, _y + 1);
-		break;
-	case 4:
-		Near = m.GetSmth(_x - 1, _y);
-		break;
-	case 5:
-		this->Shoot();
-	default:
-		return 1;
+	_sword_dmg = findInfConfig("KnightSwordDmg");
+	if (_sword_dmg < 1) {
+		_sword_dmg = 2;
 	}
-	char sym = Near->GetSym();
-	std::vector<int> cord = Near->GetPos();
-	if (sym == ' ') {
-		m.SetSmth(_x, _y,new Space(_x,_y));
-		_x = cord[0];
-		_y = cord[1];
-		m.SetSmth(_x,_y,this);
-	}
-	else if (sym == 'P') {
-		return 0;
-	}
-	else if (sym != '#') {
-		std::cout << std::endl << Near->TakeDmg(_damage);
-		if (Near->TakeDmg(_damage)) {
-			m.SetSmth(cord, new Space(cord[0],cord[1]));
-		}
-	}
-	return 1;
-}
-
-char Monster::choose_direction(Map m) const {
-	return rand()%4 + 1;
-}
-
-bool Monster::TakeDmg(int dmg) {
-	_hp -= dmg;
+	_hp = findInfConfig("KnightHp");
 	if (_hp < 1) {
-		return 1;
+		_hp = 10;
 	}
-	return 0;
+	_max_hp = findInfConfig("KnightMaxHP");
+	if (_max_hp < 1) {
+		_max_hp = 15;
+	}
+	_arrows = findInfConfig("KnightArrowCounter");
+	if (_arrows < 1) {
+		_arrows = 20;
+	}
+	_arrow_dmg = findInfConfig("KnightArrowDmg");
+	if (_arrow_dmg < 1) {
+		_arrow_dmg = 1;
+	}
 }
 
-void Monster::Move(Map m) {
-	char d = this->choose_direction(m);
-	GameObj* Near = this;
-	switch (d)
-	{
+char Knight::Move(Map m, char dir) {
+	int x = _x, y = _y;
+	switch (dir) {
 	case 1:
-		Near = m.GetSmth(_x, _y - 1);
+		y--;
 		break;
 	case 2:
-		Near = m.GetSmth(_x + 1, _y);
+		x++;
 		break;
 	case 3:
-		Near = m.GetSmth(_x, _y + 1);
+		y++;
 		break;
 	case 4:
-		Near = m.GetSmth(_x - 1, _y);
-		break;
-	default:
+		x--;
 		break;
 	}
-	char sym = Near->GetSym();
-	std::vector<int> cord = Near->GetPos();
-	if (sym == ' ') {
-		m.SetSmth(_x, _y, new Space(_x, _y));
-		_x = cord[0];
-		_y = cord[1];
-		m.SetSmth(_x, _y, this);
+
+	char Near = m.GetSmth(x,y);
+	std::cout << Near;
+	if (Near == -1 || Near == '.') {
+		_x = x;
+		_y = y;
 	}
-	else if (sym == 'K') {
-		std::cout << std::endl << Near->TakeDmg(_damage);
-		if (Near->TakeDmg(_damage)) {
-			m.SetSmth(cord, new Space(cord[0], cord[1]));
-		}
+	if (!m.IsInMidle(*this)) {
+		return dir;
 	}
+	return -1;
 }
 
-
-Zombie::Zombie(int x, int y) {
-	_sym = 'Z';
-	_x = x;
-	_y = y;
-	_hp = 5;
+char Knight::Shoot(Map m) {
+	char dir,tmp;
+	std::cin >> dir;
+	int x = _x, y = _y;
+	switch (dir)
+	{
+	case 'w':
+		y--;
+		break;
+	case 'd':
+		x++;
+		break;
+	case 's':
+		y++;
+		break;
+	case 'a':
+		x--;
+		break;
+	}
+	tmp = m.GetSmth(x,y);
+	if (tmp != -1 && tmp != '#') {
+		dir = -1;
+	}
+	return dir;
 }
 
 Dragon::Dragon(int x, int y) {
-	_sym = 'D';
 	_x = x;
 	_y = y;
-	_hp = 10;
-}
-
-Monster* EnemyFactory(int x, int y) {
-	if (rand() % 3 < 2) {
-		return new Zombie(x, y);
+	_sym = 'D';
+	_hp = findInfConfig("DragonHp");
+	if (_hp < 1) {
+		_hp = 8;
 	}
-	else {
-		return new Dragon(x, y);
+	_sword_dmg = findInfConfig("DragonSwordDmg");
+	if (_sword_dmg < 1) {
+		_sword_dmg = 2;
+	}
+	_arrow_dmg = findInfConfig("DragonArrowDmg");
+	if (_arrow_dmg < 1) {
+		_arrow_dmg = 1;
 	}
 }

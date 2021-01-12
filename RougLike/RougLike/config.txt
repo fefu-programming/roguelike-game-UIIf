@@ -1,0 +1,11 @@
+2
+FildOfViewW 25
+FildOfViewH 15
+KnightSwordDmg 2
+KnightHp 10
+KnightMaxHP 15
+KnightArrowCounter 20
+KnightArrowDmg 1
+DragonSwordDmg 2
+DragonHp 8
+DragonArrowDmg 1

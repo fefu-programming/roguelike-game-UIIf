@@ -1,51 +1,41 @@
 #pragma once
-#include <vector>
+#include "GameObject.h"
 #include "Map.h"
-#include "Projectile.h"
-
-class Character :public GameObj
-{
+class Character :public GameObj {
 protected:
-	std::vector<Projectile> bullets;
-	int _hp,
-		_damage,
-		_max_hp;
-
+	int  _hp, _sword_dmg, _arrows, _arrow_dmg;
 public:
+	int GetDmg() const;
 	int GetHp() const;
-	int GetDamage() const;
-	bool TakeDmg(int dmg);
+	int GetArrows() const;
+	virtual void TakeDmg(int dmg) {};
 };
 
-class Princess : public GameObj {
+class Projectile : public GameObj{
+	int _dmg;
+	bool _fromHero;
 public:
-	Princess(int x, int y);
+	Projectile(int x, int y, int dmg, char dir, bool fromHero = true);
+	Projectile(GameObj parent, int dmg, char dir);
 };
 
-class Monster : public Character {
+class Monster :public Character {
 protected:
-	int _fild_of_view;
-	char choose_direction(Map m) const;
-public:
-	bool TakeDmg(int dmg);
-	void Move(Map m);
+	char GetDir(Character k) const;
+	char Move();
 };
 
 class Knight : public Character {
+	int _max_hp;
 public:
 	Knight(int x, int y);
-	bool Enteract(Map m, char dir);
-	void Shoot() const;
-};
-
-class Zombie : public Monster {
-public:
-	Zombie(int x, int y);
+	char Move(Map m, char dir);
+	char Shoot(Map m);
 };
 
 class Dragon : public Monster {
-public:
 	Dragon(int x, int y);
 };
 
-Monster* EnemyFactory(int x, int y);
+
+
