@@ -11,6 +11,13 @@ int Character::GetHp() const {
 int Character::GetArrows() const {
 	return _arrows;
 }
+bool Character::TakeDmg(int dmg) {
+	_hp -= dmg;
+	if (_hp <= 0) {
+		return 1;
+	}
+	return 0;
+}
 
 Projectile::Projectile(int x, int y, int dmg, char dir, bool fromHero) {
 	_x = x;
@@ -75,17 +82,21 @@ char Knight::Move(Map m, char dir) {
 		x--;
 		break;
 	}
-
+	char toRet = -1;
 	char Near = m.GetSmth(x,y);
 	//std::cout << Near;
-	if (Near == -1 || Near == '.') {
+	if (Near == '.') {
 		_x = x;
 		_y = y;
+		if (!m.IsInMidle(*this)) {
+			toRet = dir;
+		}
 	}
-	if (!m.IsInMidle(*this)) {
-		return dir;
+	else if (Near == 'Z' || Near == 'D') {
+		toRet = 5;
 	}
-	return -1;
+	
+	return toRet;
 }
 
 char Knight::Shoot(Map m) {

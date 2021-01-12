@@ -19,6 +19,7 @@ private:
 	void MoveMap(char dir);
 	void FullRoom(int cube);
 	void SetAllChar();
+	std::vector<int> FindEnemy(int x, int y)const;
 public:
 	Levle();
 	bool PlayGame();

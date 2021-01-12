@@ -48,7 +48,7 @@ void Levle::Draw(){
 }
 
 char Levle::MovePlayr() {
-	char dir;
+	char dir, resOfMove;
 	std::cin >> dir;
 	switch (dir)
 	{
@@ -71,10 +71,35 @@ char Levle::MovePlayr() {
 	while(_IsDrawing){}
 	_IsDrawing = true;
 	_m.SetSmth(_player, '.');
-	dir = _player.Move(_m,dir);
-	
-	_m.MoveRoom(dir);
-	this->MoveMap(dir);
+	resOfMove = _player.Move(_m,dir);
+	if (resOfMove < 5) {
+		_m.MoveRoom(resOfMove);
+		this->MoveMap(resOfMove);
+		_m.SetSmth(_player);
+	}
+	else if (resOfMove == 5) {
+		std::vector<int> Enem = _player.GetPos();
+		std::vector<int> EnemInVect;
+		switch (dir) {
+		case 1:
+			Enem[1]--;
+			break;
+		case 2:
+			Enem[0]++;
+			break;
+		case 3:
+			Enem[1]++;
+			break;
+		case 4:
+			Enem[0]--;
+			break;
+		}
+		EnemInVect = this->FindEnemy(Enem[0],Enem[1]);
+		if (EnemInVect[1] != -1 &&_Enemys[EnemInVect[0]][EnemInVect[1]].TakeDmg(_player.GetDmg())) {
+			_Enemys[EnemInVect[0]].erase(_Enemys[EnemInVect[0]].begin() + EnemInVect[1]);
+			_m.SetSmth(Enem[0],Enem[1],'.');
+		}
+	}
 	_m.SetSmth(_player);
 	_IsDrawing = false;
 	return -1;
@@ -206,4 +231,32 @@ void Levle::SetAllChar() {
 		}
 	}
 	_m.SetSmth(_player);
+}
+
+std::vector<int> Levle::FindEnemy(int other_x, int other_y)const {
+	std::vector<int> CentrOFMap = _m.GetCentrCords();
+	int x = other_x - _Width * CentrOFMap[0] + _Width / 2;
+	int y = other_y - _Height * CentrOFMap[1] + _Height / 2;
+	int cube = 4;
+	if (x < 0) {
+		cube--;
+	}
+	else if (x >= _Width) {
+		cube++;
+	}
+
+	if (y < 0) {
+		cube -= 3;
+	}
+	else if (y >= _Height) {
+		cube += 3;
+	}
+	int toRet = -1;
+	for (int i = 0; i < _Enemys[cube].size(); i++) {
+		if (other_x == _Enemys[cube][i].GetPos()[0] && other_y == _Enemys[cube][i].GetPos()[1]) {
+			toRet = i;
+			break;
+		}
+	}
+	return std::vector<int>{cube, toRet};
 }

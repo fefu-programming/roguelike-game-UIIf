@@ -8,7 +8,7 @@ public:
 	int GetDmg() const;
 	int GetHp() const;
 	int GetArrows() const;
-	virtual void TakeDmg(int dmg) {};
+	bool TakeDmg(int dmg);
 };
 
 class Projectile : public GameObj{

@@ -74,8 +74,8 @@ float Perlin::Noise(float fx, float fy)
     // собственно, интерпол€ци€:
     float tx = Lerp(tx1, tx2, pointInQuadX);
     float bx = Lerp(bx1, bx2, pointInQuadX);
-    float tb = Lerp(tx, bx, pointInQuadY) + 1;
+    float tb = int(((Lerp(tx, bx, pointInQuadY) + 0.336183)/0.67) * 100);
 
     // возвращаем результат:
-    return 1/tb;
+    return tb/100;
 }

@@ -25,8 +25,8 @@ public:
 	void SetSmth(int other_x, int other_y, char sym = -1);
 	char GetSmth(int x, int y);
 	bool IsInMidle(GameObj other) const;
-	int GetWidth();
-	int GetHeight();
-	std::vector<int> GetCentrCords();
+	int GetWidth() const;
+	int GetHeight() const;
+	std::vector<int> GetCentrCords() const;
 };
 

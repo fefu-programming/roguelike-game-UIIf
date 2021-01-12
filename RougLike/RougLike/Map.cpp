@@ -227,13 +227,13 @@ bool Map::IsInMidle(GameObj other) const {
 	return x >= _Width && x <= _Width * 2 - 1 && y >= _Height && y <= _Height * 2 -1 ;
 }
 
-int Map::GetWidth() {
+int Map::GetWidth() const {
 	return _Width;
 }
-int Map::GetHeight() {
+int Map::GetHeight() const {
 	return _Height;
 }
 
-std::vector<int> Map::GetCentrCords() {
+std::vector<int> Map::GetCentrCords() const{
 	return std::vector<int>{ _MainRoomX,_MainRoomY };
 }
