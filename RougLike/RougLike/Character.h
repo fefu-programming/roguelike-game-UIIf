@@ -22,7 +22,6 @@ public:
 class Monster :public Character {
 protected:
 	char GetDir(Character k) const;
-	char Move();
 };
 
 class Knight : public Character {
@@ -34,7 +33,12 @@ public:
 };
 
 class Dragon : public Monster {
+public:
 	Dragon(int x, int y);
+};
+class Zombie : public Monster {
+public:
+	Zombie(int x, int y);
 };
 
 

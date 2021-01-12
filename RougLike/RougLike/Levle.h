@@ -9,6 +9,9 @@ private:
 	std::vector<std::vector<Projectile>> _Ammo;
 	Knight _player;
 	std::string _message = "";
+	int _SetDragons[2];
+	int _SetZombie[2];
+	int _Width, _Height;
 	bool _flag = true;
 	bool _IsDrawing = false;
 	void Draw();

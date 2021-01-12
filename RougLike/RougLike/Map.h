@@ -22,8 +22,11 @@ public:
 	void MoveRoom(char dir);
 	void Draw(std::vector<int> Cord) const;
 	void SetSmth(GameObj other,char t = -1);
-	void SetSmth(int other_x, int other_y, char sym);
-	char GetSmth(int x, int y, int cube = 4);
+	void SetSmth(int other_x, int other_y, char sym = -1);
+	char GetSmth(int x, int y);
 	bool IsInMidle(GameObj other) const;
+	int GetWidth();
+	int GetHeight();
+	std::vector<int> GetCentrCords();
 };
 

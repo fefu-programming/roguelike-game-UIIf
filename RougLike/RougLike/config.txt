@@ -1,4 +1,4 @@
-2
+17
 FildOfViewW 25
 FildOfViewH 15
 KnightSwordDmg 2
@@ -9,3 +9,10 @@ KnightArrowDmg 1
 DragonSwordDmg 2
 DragonHp 8
 DragonArrowDmg 1
+MaxCountDragonsInRoom 5
+ProcentDragon 10
+ZombieHp 5
+ZombieSwordDmg 1
+ZombieArrowDmg 0
+MaxCountZombieInRoom 7
+ProcentZombie 30

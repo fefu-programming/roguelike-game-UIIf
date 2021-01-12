@@ -164,154 +164,57 @@ void Map::SetSmth(GameObj other, char t) {
 	if (t == -1) {
 		t = other.GetSym();
 	}
-	CurMap[4][y][x] = t;
+	this->SetSmth(other.GetPos()[0],other.GetPos()[1],t);
 }
 
 void Map::SetSmth(int other_x, int other_y, char sym) {
 	int x = other_x - _Width * _MainRoomX + _Width / 2;
 	int y = other_y - _Height * _MainRoomY + _Height / 2;
+	int cube = 4;
+	if (x < 0) {
+		cube--;
+		x += _Width;
+	}
+	else if (x >= _Width) {
+		cube++;
+		x -= _Width;
+	}
+
+	if (y < 0) {
+		cube -= 3;
+		y += _Height;
+	}
+	else if (y >= _Height) {
+		cube += 3;
+		y -= _Height;
+	}
+
+	CurMap[cube][y][x] = sym;
 	//std::cout << "x y " << x << ' ' << y;
-	CurMap[4][y][x] = sym;
 	//std::cout << "\nK " << CurMap[4][y][x];
 }
 
-char Map::GetSmth(int other_x, int other_y, int cube) {
+char Map::GetSmth(int other_x, int other_y) {
 	int x = other_x - _Width * _MainRoomX + _Width / 2;
 	int y = other_y - _Height * _MainRoomY + _Height / 2;
-	if (cube < 3) {
-		y -= _Height;
-	} else if (cube > 5) {
-		y += _Height;
-	}
-
-	if (cube % 3 == 0) {
+	int cube = 4;
+	if (x < 0) {
+		cube--;
+		x += _Width;
+	} else if (x >= _Width) {
+		cube++;
 		x -= _Width;
 	}
-	else if (cube % 3 == 2) {
-		x += _Width;
-	}
 
-	switch (cube) {
-	case 0:
-		if (x >= _Width) {
-			cube = 1;
-			x -= _Width;
-		}
-		if (y >= _Height) {
-			cube = 3;
-			y -= _Height;
-		}
-		break;
-	case 1:
-		if (x < 0) {
-			cube = 0;
-			x += _Width;
-		}
-		else if (x >= _Width) {
-			cube = 2;
-			x -= _Width;
-		}
-		if (y >= _Height) {
-			cube = 4;
-			y -= _Height;
-		}
-		break;
-	case 2:
-		if (x < 0) {
-			cube = 3;
-			x += _Width;
-		}
-		if (y >= _Height) {
-			cube = 7;
-			y -= _Height;
-		}
-		break;
-	case 3:
-		if (x >= _Width) {
-			cube = 5;
-			x -= _Width;
-		}
+	if (y < 0) {
+		cube-=3;
+		y += _Height;
+	} else if (y >= _Height) {
+		cube += 3;
+		y -= _Height;
+	}		
 
-		if (y < 0) {
-			cube = 1;
-			y += _Height;
-		}
-		else if (y >= _Height) {
-			cube = 7;
-			y -= _Height;
-		}
-		break;
-	case 4:
-		if (x < 0) {
-			cube = 3;
-			x += _Width;
-		} else if (x >= _Width) {
-			cube = 5;
-			x -= _Width;
-		}
-
-		if (y < 0) {
-			cube = 1;
-			y += _Height;
-		} else if (y >= _Height) {
-			cube = 7;
-			y -= _Height;
-		}		
-		break;
-	case 5:
-		if (x < 0) {
-			cube = 3;
-			x += _Width;
-		}
-
-		if (y < 0) {
-			cube = 1;
-			y += _Height;
-		}
-		else if (y >= _Height) {
-			cube = 7;
-			y -= _Height;
-		}
-		break;
-	case 6:
-		if (x >= _Width) {
-			cube = 5;
-			x -= _Width;
-		}
-
-		if (y < 0) {
-			cube = 1;
-			y += _Height;
-		}
-		break;
-	case 7:
-		if (x < 0) {
-			cube = 3;
-			x += _Width;
-		}
-		else if (x >= _Width) {
-			cube = 5;
-			x -= _Width;
-		}
-
-		if (y < 0) {
-			cube = 1;
-			y += _Height;
-		}
-		break;
-	case 8:
-		if (x < 0) {
-			cube = 3;
-			x += _Width;
-		}
-
-		if (y < 0) {
-			cube = 1;
-			y += _Height;
-		}
-		break;
-	}
-	std::cout << '\n' << x <<' '<< y<<'\n';
+	//std::cout << '\n' << x <<' '<< y<<'\n';
 	if (cube < 9 && cube >= 0 && x >= 0 && x < _Width && y >= 0 && y < _Height) {
 		return CurMap[cube][y][x];
 	}
@@ -322,4 +225,15 @@ bool Map::IsInMidle(GameObj other) const {
 	int x = other.GetPos()[0] - _Width * (_MainRoomX) + _Width *1.5;
 	int y = other.GetPos()[1] - _Height * (_MainRoomY) + _Height * 1.5;
 	return x >= _Width && x <= _Width * 2 - 1 && y >= _Height && y <= _Height * 2 -1 ;
+}
+
+int Map::GetWidth() {
+	return _Width;
+}
+int Map::GetHeight() {
+	return _Height;
+}
+
+std::vector<int> Map::GetCentrCords() {
+	return std::vector<int>{ _MainRoomX,_MainRoomY };
 }

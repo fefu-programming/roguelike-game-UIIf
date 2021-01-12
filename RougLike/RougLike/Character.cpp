@@ -77,7 +77,7 @@ char Knight::Move(Map m, char dir) {
 	}
 
 	char Near = m.GetSmth(x,y);
-	std::cout << Near;
+	//std::cout << Near;
 	if (Near == -1 || Near == '.') {
 		_x = x;
 		_y = y;
@@ -129,5 +129,23 @@ Dragon::Dragon(int x, int y) {
 	_arrow_dmg = findInfConfig("DragonArrowDmg");
 	if (_arrow_dmg < 1) {
 		_arrow_dmg = 1;
+	}
+}
+
+Zombie::Zombie(int x, int y) {
+	_x = x;
+	_y = y;
+	_sym = 'Z';
+	_hp = findInfConfig("ZombieHp");
+	if (_hp < 1) {
+		_hp = 5;
+	}
+	_sword_dmg = findInfConfig("ZombieSwordDmg");
+	if (_sword_dmg < 1) {
+		_sword_dmg = 1;
+	}
+	_arrow_dmg = findInfConfig("ZombieArrowDmg");
+	if (_arrow_dmg < 1) {
+		_arrow_dmg = 0;
 	}
 }
