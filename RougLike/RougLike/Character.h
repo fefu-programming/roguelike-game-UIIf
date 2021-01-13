@@ -7,6 +7,7 @@ protected:
 public:
 	int GetDmg() const;
 	int GetHp() const;
+	int GetArrowsDmg() const;
 	int GetArrows() const;
 	bool TakeDmg(int dmg);
 };
@@ -16,12 +17,17 @@ class Projectile : public GameObj{
 	bool _fromHero;
 public:
 	Projectile(int x, int y, int dmg, char dir, bool fromHero = true);
-	Projectile(GameObj parent, int dmg, char dir);
+	Projectile(Character parent, char dir);
+	int GetDmg() const;
+	bool WhosArrow()const;
+	char Move(Map m);
 };
 
 class Monster :public Character {
 protected:
-	char GetDir(Character k) const;
+	char GetDir(Map m) const;
+public:
+	char Move(Map m);
 };
 
 class Knight : public Character {

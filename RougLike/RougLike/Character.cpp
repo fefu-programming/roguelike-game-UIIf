@@ -7,6 +7,9 @@ int Character::GetDmg() const {
 int Character::GetHp() const {
 	return _hp;
 }
+int Character::GetArrowsDmg() const {
+	return _arrow_dmg;
+}
 
 int Character::GetArrows() const {
 	return _arrows;
@@ -26,18 +29,146 @@ Projectile::Projectile(int x, int y, int dmg, char dir, bool fromHero) {
 	_sym = dir;
 	_fromHero = fromHero;
 }
-Projectile::Projectile(GameObj parent, int dmg, char dir) {
+Projectile::Projectile(Character parent, char dir) {
 	_x = parent.GetPos()[0];
 	_y = parent.GetPos()[1];
-	_dmg = dmg;
-	_sym = dir;
+	_dmg = parent.GetArrowsDmg();
+	switch (dir)
+	{
+	case 1:
+		_sym = '^';
+		_y--;
+		break;
+	case 2:
+		_sym = '>';
+		_x++;
+		break;
+	case 3:
+		_sym = 'v';
+		_y++;
+		break;
+	case 4:
+		_sym = '<';
+		_x--;
+		break;
+	default:
+		_sym = 'o';
+		break;
+	}
 	_fromHero = false;
 	if(parent.GetSym() == 'K')
 		_fromHero = true;
 }
 
-char Monster::GetDir(Character k) const {
-	return -1;
+int  Projectile::GetDmg() const {
+	return _dmg;
+}
+
+bool Projectile::WhosArrow()const {
+	return _fromHero;
+}
+
+char Projectile::Move(Map m) {
+	char res = -1;
+	int x = _x;
+	int y = _y;
+	char Near;
+	switch (_sym) {
+	case '^':
+		y--;
+		res = 1;
+		break;
+	case '>':
+		x++;
+		res = 2;
+		break;
+	case 'v':
+		y++;
+		res = 3;
+		break;
+	case '<':
+		x--;
+		res = 4;
+		break;
+	}
+	Near = m.GetSmth(x,y);
+	if (Near == 'K' || Near == 'Z' || Near == 'D') {
+		res += 4;
+	}
+	else if (Near == '#' || Near == -1) {
+		res = -1;
+	}
+	_x = x;
+	_y = y;
+	return res;
+}
+
+char Monster::GetDir(Map m) const {
+	return rand()%4 + 1;
+}
+
+char Monster::Move(Map m) {
+	char res = -1;
+	int x = _x;
+	int y = _y;
+	char Near;
+	char  d = this->GetDir(m);
+	switch (d) {
+	case 1:
+		y--;
+		res = 1;
+		break;
+	case 2:
+		x++;
+		res = 2;
+		break;
+	case 3:
+		y++;
+		res = 3;
+		break;
+	case 4:
+		x--;
+		res = 4;
+		break;
+	case 5:
+		y--;
+		break;
+	case 6:
+		x++;
+		break;
+	case 7:
+		y++;
+		break;
+	case 8:
+		x--;
+		break;
+	}
+	if (d > 4 && d < 9) {
+		res = d;
+		Near = m.GetSmth(x, y);
+		if (Near == 'K') {
+			res += 4;
+		}
+	}
+	else {
+		Near = m.GetSmth(x, y);
+		if (Near == -1) {
+			res = -1;
+		}
+		else if (Near == 'K') {
+			res = 0;
+		}
+		else if (Near == '^' || Near == '>' || Near == 'v' || Near == '<') {
+			res = 13;
+			_x = x;
+			_y = y;
+		}
+		else if(Near != '#'){
+			_x = x;
+			_y = y;
+		}
+	}
+	return res;
 }
 
 Knight::Knight(int x, int y) {
@@ -100,29 +231,40 @@ char Knight::Move(Map m, char dir) {
 }
 
 char Knight::Shoot(Map m) {
-	char dir,tmp;
+	char dir,tmp, toRes;
 	std::cin >> dir;
 	int x = _x, y = _y;
 	switch (dir)
 	{
 	case 'w':
 		y--;
+		dir = 1;
 		break;
 	case 'd':
 		x++;
+		dir = 2;
 		break;
 	case 's':
 		y++;
+		dir = 3;
 		break;
 	case 'a':
 		x--;
+		dir = 4;
 		break;
 	}
 	tmp = m.GetSmth(x,y);
-	if (tmp != -1 && tmp != '#') {
-		dir = -1;
+	toRes = -1;
+	if (tmp == '#' || _arrows < 1) {
+		toRes = -1;
 	}
-	return dir;
+	else if (tmp == '.') {
+		toRes = dir;
+	}
+	else if (tmp == 'Z' || tmp == 'D') {
+		toRes = 4+dir;
+	}
+	return toRes;
 }
 
 Dragon::Dragon(int x, int y) {

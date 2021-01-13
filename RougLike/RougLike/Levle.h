@@ -17,6 +17,8 @@ private:
 	void Draw();
 	char MovePlayr();
 	void MoveMap(char dir);
+	void MoveArrows();
+	void MoveEnem();
 	void FullRoom(int cube);
 	void SetAllChar();
 	std::vector<int> FindEnemy(int x, int y)const;
