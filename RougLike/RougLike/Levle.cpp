@@ -1,6 +1,8 @@
 #include "Levle.h"
+#include <time.h> 
 
 Levle::Levle() : _player(0, 0) {
+	srand(time(NULL));
 	_m.SetSmth(_player);
 	_Width = _m.GetWidth();
 	_Height = _m.GetHeight();
@@ -414,83 +416,99 @@ void Levle::FullRoom(int cube) {
 	else if (cube > 5) {
 		LeftUpCord[1] += _Height;
 	}
+	int x;
 
  	for (int i = 0; i < _SetDragons[0]; i++) {
 		if (rand() % 100 <= _SetDragons[1]) {
+			x = 0;
 			std::vector<int> cords {rand() % _Width + LeftUpCord[0], rand() % _Height + LeftUpCord[1] };
-			while (_m.GetSmth(cords[0], cords[1]) != '.') {
+			while (_m.GetSmth(cords[0], cords[1]) != '.' && x < 100) {
 				cords[0] = rand() % _Width + LeftUpCord[0];
 				cords[1] = rand() % _Height + LeftUpCord[1];
+				x++;
 			}
-			_Enemys[cube].emplace_back(*new Dragon(cords[0],cords[1]));
+			if(x < 100)
+				_Enemys[cube].emplace_back(*new Dragon(cords[0],cords[1]));
 		}
 	}
 
 	for (int i = 0; i < _SetZombie[0]; i++) {
 		if (rand() % 100 <= _SetZombie[1]) {
+			x = 0;
 			std::vector<int> cords{ rand() % _Width + LeftUpCord[0], rand() % _Height + LeftUpCord[1] };
-			while (_m.GetSmth(cords[0], cords[1]) != '.') {
+			while (_m.GetSmth(cords[0], cords[1]) != '.' && x < 100) {
 				cords[0] = rand() % _Width + LeftUpCord[0];
 				cords[1] = rand() % _Height + LeftUpCord[1];
+				x++;
 			}
-			_Enemys[cube].emplace_back(*new Zombie(cords[0], cords[1]));
+			if (x < 100)
+				_Enemys[cube].emplace_back(*new Zombie(cords[0], cords[1]));
 		}
 	}
 
 	for (int i = 0; i < _SetHeal[0]; i++) {
 		if (rand() % 100 <= _SetHeal[1]) {
+			x = 0;
 			std::vector<int> cords{ rand() % _Width + LeftUpCord[0], rand() % _Height + LeftUpCord[1] };
-			while (_m.GetSmth(cords[0], cords[1]) != '.') {
+			while (_m.GetSmth(cords[0], cords[1]) != '.' && x < 100) {
 				cords[0] = rand() % _Width + LeftUpCord[0];
 				cords[1] = rand() % _Height + LeftUpCord[1];
+				x++;
 			}
-			_Stuff[cube].emplace_back(*new Stuff(cords[0], cords[1],'+'));
+			if (x < 100)
+				_Stuff[cube].emplace_back(*new Stuff(cords[0], cords[1],'+'));
 
 		}
 	}
 
 	for (int i = 0; i < _SetArrow[0]; i++) {
 		if (rand() % 100 <= _SetArrow[1]) {
+			x = 0;
 			std::vector<int> cords{ rand() % _Width + LeftUpCord[0], rand() % _Height + LeftUpCord[1] };
-			while (_m.GetSmth(cords[0], cords[1]) != '.') {
+			while (_m.GetSmth(cords[0], cords[1]) != '.' && x < 100) {
 				cords[0] = rand() % _Width + LeftUpCord[0];
 				cords[1] = rand() % _Height + LeftUpCord[1];
+				x++;
 			}
-			_Stuff[cube].emplace_back(*new Stuff(cords[0], cords[1], '='));
+			if (x < 100)
+				_Stuff[cube].emplace_back(*new Stuff(cords[0], cords[1], '='));
 		}
 	}
 
 	for (int i = 0; i < _SetPrincess[0]; i++) {
 		if (rand() % 100 <= _SetPrincess[1]) {
+			x = 0;
 			std::vector<int> cords{ rand() % _Width + LeftUpCord[0], rand() % _Height + LeftUpCord[1] };
-			while (_m.GetSmth(cords[0], cords[1]) != '.') {
+			while (_m.GetSmth(cords[0], cords[1]) != '.' && x < 100) {
 				cords[0] = rand() % _Width + LeftUpCord[0];
 				cords[1] = rand() % _Height + LeftUpCord[1];
+				x++;
 			}
-			_Stuff[cube].emplace_back(*new Stuff(cords[0], cords[1], 'P'));
+			if (x < 100)
+				_Stuff[cube].emplace_back(*new Stuff(cords[0], cords[1], 'P'));
 		}
 	}
 
 }
 
 void Levle::PlayGame() {
-	//char c;
+	////char c;
+	//this->Draw();
+	//while (_flag) {
+	//	Sleep(300);
+	//	while (this->MovePlayr() == 1) {}
+	//	this->MoveEnem();
+	//	this->Draw();
+	//	//std::cin >> c;
+	//	
+	//}
 	this->Draw();
-	while (_flag) {
-		Sleep(300);
-		while (this->MovePlayr() == 1) {}
-		this->MoveEnem();
-		this->Draw();
-		//std::cin >> c;
-		
-	}
-	/*this->Draw();
 	
-	std::thread pl(&Levle::PlayGame,this);
 	std::thread en(&Levle::EnemyThread, this);
+	std::thread pl(&Levle::PlayThread, this);
 
 	pl.join();
-	en.join();*/
+	en.join();
 
 	if (_player.GetHp() > 0) {
 		std::cout << "\nYour princess in another castle \n";
@@ -517,16 +535,16 @@ void Levle::SetAllChar() {
 
 void Levle::PlayThread() {
 	while (_flag) {
-		while (this->MovePlayr() == 1) {};
+		while (this->MovePlayr() == 1) {}
 		this->Draw();
-		Sleep(1750);
+		Sleep(300);
 	}
 }
 void Levle::EnemyThread() {
 	while (_flag) {
 		this->MoveEnem();
 		this->Draw();
-		Sleep(1500);
+		Sleep(1000);
 	}
 }
 //
