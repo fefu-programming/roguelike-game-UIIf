@@ -23,6 +23,11 @@ public:
 	char Move(Map m);
 };
 
+class Stuff : public GameObj {
+public:
+	Stuff(int x, int y, char sym);
+};
+
 class Monster :public Character {
 protected:
 	char GetDir(Map m) const;
@@ -36,6 +41,8 @@ public:
 	Knight(int x, int y);
 	char Move(Map m, char dir);
 	char Shoot(Map m);
+	void TakeArrow(int a);
+	void TakeHp(int h);
 };
 
 class Dragon : public Monster {

@@ -1,4 +1,5 @@
 #include "GameObject.h"
+
 char GameObj::GetSym()const {
 	return _sym;
 }

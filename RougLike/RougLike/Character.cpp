@@ -95,12 +95,19 @@ char Projectile::Move(Map m) {
 	if (Near == 'K' || Near == 'Z' || Near == 'D') {
 		res += 4;
 	}
-	else if (Near == '#' || Near == -1) {
+	else if (Near == '#' || Near == -1 || Near =='+' || Near == '=' || Near =='P') {
 		res = -1;
 	}
 	_x = x;
 	_y = y;
 	return res;
+}
+
+
+Stuff::Stuff(int x, int y, char sym) {
+	_x = x;
+	_y = y;
+	_sym = sym;
 }
 
 char Monster::GetDir(Map m) const {
@@ -163,7 +170,7 @@ char Monster::Move(Map m) {
 			_x = x;
 			_y = y;
 		}
-		else if(Near != '#'){
+		else if(Near != '#' && Near != '+' && Near != '=' && Near != 'P'){
 			_x = x;
 			_y = y;
 		}
@@ -216,16 +223,19 @@ char Knight::Move(Map m, char dir) {
 	char toRet = -1;
 	char Near = m.GetSmth(x,y);
 	//std::cout << Near;
-	if (Near == '.') {
+	if (Near == 'Z' || Near == 'D') {
+		toRet = 5;
+	}
+	else if (Near != '#') {
 		_x = x;
 		_y = y;
 		if (!m.IsInMidle(*this)) {
 			toRet = dir;
 		}
 	}
-	else if (Near == 'Z' || Near == 'D') {
+	/*else if (Near == 'Z' || Near == 'D') {
 		toRet = 5;
-	}
+	}*/
 	
 	return toRet;
 }
@@ -260,11 +270,23 @@ char Knight::Shoot(Map m) {
 	}
 	else if (tmp == '.') {
 		toRes = dir;
+		_arrows--;
 	}
 	else if (tmp == 'Z' || tmp == 'D') {
 		toRes = 4+dir;
+		_arrows--;
 	}
 	return toRes;
+}
+
+void Knight::TakeArrow(int a) {
+	_arrows += a;
+}
+void Knight::TakeHp(int h) {
+	_hp += h;
+	if (_hp > _max_hp) {
+		_hp = _max_hp;
+	}
 }
 
 Dragon::Dragon(int x, int y) {

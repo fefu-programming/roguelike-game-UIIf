@@ -1,4 +1,4 @@
-17
+25
 FildOfViewW 25
 FildOfViewH 15
 KnightSwordDmg 2
@@ -16,3 +16,11 @@ ZombieSwordDmg 1
 ZombieArrowDmg 0
 MaxCountZombieInRoom 7
 ProcentZombie 30
+MaxCountHealInRoom 5
+ProcentHeal 20
+MaxCountArrowInRoom 5
+ProcentArrow 20
+MaxCountPrincessInRoom 1
+ProcentPrincess 10
+HealValue 3
+ArrowValue 3
