@@ -74,7 +74,7 @@ Levle::Levle() : _player(0, 0) {
 
 void Levle::Draw(){
 	while (_IsDrawing) {
-
+		return;
 	}
 	_IsDrawing = true;
 	system("cls");
@@ -85,9 +85,10 @@ void Levle::Draw(){
 }
 
 char Levle::MovePlayr() {
-	char dir, resOfAction;
-	std::cin >> dir;
-	switch (dir)
+	char dir  = -1, resOfAction;
+	//std::cin >> dir;
+	//dir = 'd';
+	/*switch (dir)
 	{
 	case 'w':
 		dir = 1;
@@ -107,12 +108,37 @@ char Levle::MovePlayr() {
 	default:
 		dir = 0;
 		break;
+	}*/
+
+	if (GetKeyState('W') & 0x8000)
+	{
+		dir = 1;
 	}
-	while(_IsDrawing){}
-	_IsDrawing = true;
+	if (GetKeyState('D') & 0x8000)
+	{
+		dir = 2;
+	}
+	if (GetKeyState('S') & 0x8000)
+	{
+		dir = 3;
+	}
+	if (GetKeyState('A') & 0x8000)
+	{
+		dir = 4;
+	}
+	if (GetKeyState('K') & 0x8000)
+	{
+		_PlayerShooting = true;
+	}
+	//std::cout << int(dir) << '\n';
+	if (dir == -1) {
+		return 1;
+	}
+	while (_IsCalculation) { return 1; }
+	_IsCalculation = true;
 	if (_flag) {
 		this->MoveArrows();
-		if (dir < 5) {
+		if (!_PlayerShooting) {
 			_m.SetSmth(_player, '.');
 			resOfAction = _player.Move(_m, dir);
 			if (resOfAction < 5) {
@@ -161,8 +187,9 @@ char Levle::MovePlayr() {
 			}
 			_m.SetSmth(_player);
 		}
-		else if (dir == 5) {
-			resOfAction = _player.Shoot(_m);
+		else {
+			resOfAction = _player.Shoot(_m,dir);
+			_PlayerShooting = false;
 			if (resOfAction != -1) {
 				std::vector<int> Enem = _player.GetPos();
 				switch (resOfAction) {
@@ -206,7 +233,7 @@ char Levle::MovePlayr() {
 			}
 		}
 	}
-	_IsDrawing = false;
+	_IsCalculation = false;
 	return -1;
 }
 
@@ -327,8 +354,8 @@ void Levle::MoveArrows() {
 
 void Levle::MoveEnem() {
 	char d;
-	while (_IsDrawing) {}
-	_IsDrawing = true;
+	while (_IsCalculation) { return; }
+	_IsCalculation = true;
 	if (_flag) {
 		this->MoveArrows();
 		for (int i = 0; i < 9; i++) {
@@ -363,7 +390,7 @@ void Levle::MoveEnem() {
 			}
 		}
 	}
-	_IsDrawing = false;
+	_IsCalculation = false;
 }
 
 void Levle::FullRoom(int cube) {
@@ -448,19 +475,29 @@ void Levle::FullRoom(int cube) {
 
 void Levle::PlayGame() {
 	//char c;
+	this->Draw();
 	while (_flag) {
-		this->Draw();
-		this->MovePlayr();
+		Sleep(300);
+		while (this->MovePlayr() == 1) {}
 		this->MoveEnem();
+		this->Draw();
 		//std::cin >> c;
+		
 	}
+	/*this->Draw();
+	
+	std::thread pl(&Levle::PlayGame,this);
+	std::thread en(&Levle::EnemyThread, this);
+
+	pl.join();
+	en.join();*/
+
 	if (_player.GetHp() > 0) {
 		std::cout << "\nYour princess in another castle \n";
 	}
 	else {
 		std::cout << "\nOh nooooooo, my princess collection\n";
 	}
-	return 1;
 }
 
 void Levle::SetAllChar() {
@@ -477,6 +514,27 @@ void Levle::SetAllChar() {
 	}
 	_m.SetSmth(_player);
 }
+
+void Levle::PlayThread() {
+	while (_flag) {
+		while (this->MovePlayr() == 1) {};
+		this->Draw();
+		Sleep(1750);
+	}
+}
+void Levle::EnemyThread() {
+	while (_flag) {
+		this->MoveEnem();
+		this->Draw();
+		Sleep(1500);
+	}
+}
+//
+//void wait(unsigned timeout)
+//{
+//	timeout += std::clock();
+//	while (std::clock() < timeout) continue;
+//}
 
 std::vector<int> Levle::FindEnemy(int other_x, int other_y, int c)const {
 	std::vector<int> CentrOFMap = _m.GetCentrCords();

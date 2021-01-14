@@ -1,6 +1,10 @@
 #pragma once
 #include "Map.h"
 #include"Character.h"
+#include <thread>
+#include <time.h>
+#include "windows.h"
+
 class Levle
 {
 private:
@@ -20,6 +24,8 @@ private:
 	int _ArrowVal;
 	bool _flag = true;
 	bool _IsDrawing = false;
+	bool _IsCalculation = false;
+	bool _PlayerShooting = false;
 	void Draw();
 	char MovePlayr();
 	void MoveMap(char dir);
@@ -27,6 +33,8 @@ private:
 	void MoveEnem();
 	void FullRoom(int cube);
 	void SetAllChar();
+	void PlayThread();
+	void EnemyThread();
 	std::vector<int> FindEnemy(int x, int y, int c = 1)const;
 public:
 	Levle();

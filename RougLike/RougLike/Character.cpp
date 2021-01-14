@@ -240,27 +240,22 @@ char Knight::Move(Map m, char dir) {
 	return toRet;
 }
 
-char Knight::Shoot(Map m) {
-	char dir,tmp, toRes;
-	std::cin >> dir;
+char Knight::Shoot(Map m, char dir) {
+	char tmp, toRes;
 	int x = _x, y = _y;
 	switch (dir)
 	{
-	case 'w':
+	case 1:
 		y--;
-		dir = 1;
 		break;
-	case 'd':
+	case 2:
 		x++;
-		dir = 2;
 		break;
-	case 's':
+	case 3:
 		y++;
-		dir = 3;
 		break;
-	case 'a':
+	case 4:
 		x--;
-		dir = 4;
 		break;
 	}
 	tmp = m.GetSmth(x,y);

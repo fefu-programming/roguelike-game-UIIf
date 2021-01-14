@@ -40,7 +40,7 @@ class Knight : public Character {
 public:
 	Knight(int x, int y);
 	char Move(Map m, char dir);
-	char Shoot(Map m);
+	char Shoot(Map m, char dir);
 	void TakeArrow(int a);
 	void TakeHp(int h);
 };
