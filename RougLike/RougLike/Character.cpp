@@ -111,7 +111,12 @@ Stuff::Stuff(int x, int y, char sym) {
 }
 
 char Monster::GetDir(Map m) const {
-	return rand()%4 + 1;
+	int smth = 0;
+	if (_sym == 'D')
+		if (rand() % 30 == 0) {
+			smth += 4;
+		}
+	return rand()%4 + 1 + smth;
 }
 
 char Monster::Move(Map m) {

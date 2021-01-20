@@ -383,6 +383,7 @@ void Levle::MoveEnem() {
 				}
 				else if (d > 4 && d < 9) {
 					std::vector<int> temp = _Enemys[i][j].GetPos();
+					temp = this->FindEnemy(temp[0],temp[1]);
 					_Ammo[temp[0]].emplace_back(*new Projectile(_Enemys[i][j], d - 4));
 				}
 				else if (d > 8 && d < 13) {
